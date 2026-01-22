@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LussInkz - Tienda de Ropa Premium</title>
+    <meta name="description" content="Descubre las últimas tendencias en moda urbana con LussInkz. Prendas exclusivas con diseño único.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- AOS para animaciones -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        /* Dark Mode Variables */
+        :root {
+            --primary-color: #000000;
+            --accent-color: #ff0000;
+            --text-light: #666;
+            --bg-light: #f8f9fa;
+            --bg-primary: #ffffff;
+            --text-primary: #000000;
+            --text-secondary: #666666;
+            --border-color: #e5e5e5;
+            --card-bg: #ffffff;
+            --nav-bg: #ffffff;
+        }
+
+        body.dark-mode {
+            --primary-color: #ffffff;
+            --accent-color: #ff0000;
+            --text-light: #a0a0a0;
+            --bg-light: #1a1a1a;
+            --bg-primary: #0d0d0d;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --border-color: #333333;
+            --card-bg: #1a1a1a;
+            --nav-bg: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-light);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 5px;
+        }
+
+        /* Enhanced Image Gallery Styles */
+        .image-gallery {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            cursor: zoom-in;
+        }
+
+        .image-gallery img {
+            transition: transform 0.3s ease;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-gallery:hover img {
+            transform: scale(1.1);
+        }
+
+        .thumbnail-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .thumbnail:hover,
+        .thumbnail.active {
+            border-color: var(--accent-color);
+            transform: scale(1.05);
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Zoom Modal */
+        .zoom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 10000;
+            cursor: zoom-out;
+        }
+
+        .zoom-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .zoom-image {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .zoom-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            padding: 20px;
+            cursor: pointer;
+            font-size: 24px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .zoom-nav:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .zoom-prev {
+            left: 20px;
+        }
+
+        .zoom-next {
+            right: 20px;
+        }
+
+        /* Theme toggle styles */
+        .theme-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--border-color);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .theme-toggle .slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle.active .slider {
+            transform: translateX(30px);
+        }
+
+        .theme-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            transition: opacity 0.3s ease;
+        }
+
+        .theme-icon.sun {
+            left: 8px;
+            color: #fbbf24;
+        }
+
+        .theme-icon.moon {
+            right: 8px;
+            color: #6b7280;
+        }
+
+        /* Dark mode theme icon colors */
+        body.dark-mode .theme-icon.sun {
+            color: #fbbf24;
+        }
+
+        body.dark-mode .theme-icon.moon {
+            color: #fbbf24;
+        }
+
+        /* Light mode theme icon colors */
+        body:not(.dark-mode) .theme-icon.sun {
+            color: #fbbf24;
+        }
+
+        body:not(.dark-mode) .theme-icon.moon {
+            color: #6b7280;
+        }
+
+        /* Theme toggle styles */
+        .theme-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--border-color);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .theme-toggle .slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle.active .slider {
+            transform: translateX(30px);
+        }
+
+        .theme-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            transition: opacity 0.3s ease;
+        }
+
+        .theme-icon.sun {
+            left: 8px;
+            color: #fbbf24;
+        }
+
+        .theme-icon.moon {
+            right: 8px;
+            color: #6b7280;
+        }
+
+        /* Dark mode theme icon colors */
+        body.dark-mode .theme-icon.sun {
+            color: #fbbf24;
+        }
+
+        body.dark-mode .theme-icon.moon {
+            color: #fbbf24;
+        }
+
+        /* Light mode theme icon colors */
+        body:not(.dark-mode) .theme-icon.sun {
+            color: #fbbf24;
+        }
+
+        body:not(.dark-mode) .theme-icon.moon {
+            color: #6b7280;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .product-card:hover::before {
+            left: 100%;
+        }
+
+        /* Loading animation */
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Cart animation */
+        .cart-bounce {
+            animation: bounce 0.5s;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        /* Mobile menu */
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        /* Product grid animation */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Newsletter form */
+        .newsletter-input {
+            transition: all 0.3s ease;
+        }
+
+        .newsletter-input:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Size selector */
+        .size-selector {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .size-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #000;
+        }
+
+        .size-btn:hover, .size-btn.selected {
+            border-color: var(--accent-color);
+            background: var(--accent-color);
+            color: white;
+        }
+
+        /* Dark mode size buttons */
+        [data-theme="dark"] .size-btn {
+            background: var(--card-bg);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .size-btn:hover, 
+        [data-theme="dark"] .size-btn.selected {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            color: white;
+        }
+
+        /* Product card buttons */
+        .product-card button {
+            transition: all 0.3s ease;
+        }
+
+        /* Dark mode product card buttons */
+        [data-theme="dark"] .product-card button {
+            background-color: var(--accent-color) !important;
+            color: white !important;
+        }
+
+        [data-theme="dark"] .product-card button:hover {
+            background-color: #cc0000 !important;
+            transform: scale(1.05);
+        }
+
+        /* Modal buttons */
+        .modal button {
+            transition: all 0.3s ease;
+        }
+
+        /* Dark mode text colors */
+        [data-theme="dark"] h1,
+        [data-theme="dark"] h2,
+        [data-theme="dark"] h3,
+        [data-theme="dark"] h4,
+        [data-theme="dark"] h5,
+        [data-theme="dark"] h6 {
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] p,
+        [data-theme="dark"] span,
+        [data-theme="dark"] div {
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] .text-gray-600,
+        [data-theme="dark"] .text-gray-700,
+        [data-theme="dark"] .text-gray-500,
+        [data-theme="dark"] .text-gray-400 {
+            color: var(--text-secondary) !important;
+        }
+
+        [data-theme="dark"] .text-black {
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] .text-white {
+            color: var(--text-primary) !important;
+        }
+
+        /* Dark mode modal content */
+        [data-theme="dark"] .modal-content {
+            background: var(--card-bg) !important;
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] .modal h2,
+        [data-theme="dark"] .modal h3,
+        [data-theme="dark"] .modal p {
+            color: var(--text-primary) !important;
+        }
+
+        /* Dark mode form inputs */
+        [data-theme="dark"] input,
+        [data-theme="dark"] textarea {
+            background: var(--card-bg) !important;
+            color: var(--text-primary) !important;
+            border-color: var(--border-color) !important;
+        }
+
+        [data-theme="dark"] input::placeholder,
+        [data-theme="dark"] textarea::placeholder {
+            color: var(--text-secondary) !important;
+        }
+
+        /* Dark mode footer */
+        [data-theme="dark"] footer {
+            background: var(--nav-bg) !important;
+        }
+
+        [data-theme="dark"] footer h3,
+        [data-theme="dark"] footer h4,
+        [data-theme="dark"] footer p,
+        [data-theme="dark"] footer span {
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] footer ul li a {
+            color: var(--text-secondary) !important;
+        }
+
+        [data-theme="dark"] footer ul li a:hover {
+            color: var(--text-primary) !important;
+        }
+
+        /* Dark mode modal buttons */
+        [data-theme="dark"] .modal button {
+            background-color: var(--accent-color) !important;
+            color: white !important;
+            border-color: var(--accent-color) !important;
+        }
+
+        [data-theme="dark"] .modal button:hover {
+            background-color: #cc0000 !important;
+            border-color: #cc0000 !important;
+        }
+
+        /* Dark mode quantity selector */
+        [data-theme="dark"] .quantity-selector {
+            border-color: var(--border-color) !important;
+            background: var(--card-bg) !important;
+        }
+
+        [data-theme="dark"] .quantity-btn {
+            background: var(--accent-color) !important;
+            color: white !important;
+        }
+
+        [data-theme="dark"] .quantity-btn:hover {
+            background: #cc0000 !important;
+        }
+
+        /* Dark mode notification */
+        body.dark-mode .notification {
+            background: var(--card-bg) !important;
+            color: var(--text-primary) !important;
+            border: 1px solid var(--border-color) !important;
+        }
+
+        /* Dark mode cart sidebar */
+        [data-theme="dark"] #cartSidebar {
+            background: var(--card-bg) !important;
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] #cartSidebar h2,
+        [data-theme="dark"] #cartSidebar h3,
+        [data-theme="dark"] #cartSidebar p,
+        [data-theme="dark"] #cartSidebar span {
+            color: var(--text-primary) !important;
+        }
+
+        /* Dark mode sections */
+        [data-theme="dark"] section {
+            background: var(--bg-primary) !important;
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] section h1,
+        [data-theme="dark"] section h2,
+        [data-theme="dark"] section h3,
+        [data-theme="dark"] section h4,
+        [data-theme="dark"] section p,
+        [data-theme="dark"] section span {
+            color: var(--text-primary) !important;
+        }
+
+        /* Dark mode hero section */
+        [data-theme="dark"] .hero-content h1,
+        [data-theme="dark"] .hero-content p {
+            color: white !important;
+        }
+
+        /* Dark mode features */
+        [data-theme="dark"] .feature-card {
+            background: var(--card-bg) !important;
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] .feature-card h3,
+        [data-theme="dark"] .feature-card p {
+            color: var(--text-primary) !important;
+        }
+
+        /* Dark mode categories */
+        [data-theme="dark"] .category-card {
+            background: var(--card-bg) !important;
+            color: var(--text-primary) !important;
+        }
+
+        /* Dark mode about section */
+        [data-theme="dark"] .about-content h2,
+        [data-theme="dark"] .about-content p {
+            color: var(--text-primary) !important;
+        }
+
+        /* Dark mode social media buttons */
+        [data-theme="dark"] .w-10.h-10.bg-gray-200 {
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border-color) !important;
+        }
+
+        [data-theme="dark"] .w-10.h-10.bg-gray-800 {
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border-color) !important;
+        }
+
+        [data-theme="dark"] .w-10.h-10:hover {
+            background: var(--accent-color) !important;
+            color: white !important;
+        }
+
+        /* Newsletter button */
+        .newsletter-btn {
+            background: var(--accent-color) !important;
+            color: white !important;
+            transition: all 0.3s ease;
+        }
+
+        .newsletter-btn:hover {
+            background: #cc0000 !important;
+            transform: scale(1.05);
+        }
+
+        /* About section button */
+        .about-btn {
+            background: var(--accent-color) !important;
+            color: white !important;
+            transition: all 0.3s ease;
+        }
+
+        .about-btn:hover {
+            background: #cc0000 !important;
+            transform: scale(1.05);
+        }
+
+        /* Hero buttons */
+        .hero-btn {
+            transition: all 0.3s ease;
+        }
+
+        .hero-btn-primary {
+            background: var(--accent-color) !important;
+            color: white !important;
+        }
+
+        .hero-btn-primary:hover {
+            background: #cc0000 !important;
+            transform: scale(1.05);
+        }
+
+        .hero-btn-secondary {
+            border: 2px solid var(--accent-color) !important;
+            color: var(--accent-color) !important;
+        }
+
+        .hero-btn-secondary:hover {
+            background: var(--accent-color) !important;
+            color: white !important;
+            transform: scale(1.05);
+        }
+
+        /* Load more button */
+        .load-more-btn {
+            background: var(--accent-color) !important;
+            color: white !important;
+            transition: all 0.3s ease;
+        }
+
+        .load-more-btn:hover {
+            background: #cc0000 !important;
+            transform: scale(1.05);
+        }
+
+        /* Filter buttons - Estilo Premium */
+        .filter-btn {
+            padding: 12px 24px;
+            border: 2px solid transparent;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            color: #333333;
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .filter-btn:hover::before {
+            left: 100%;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+            color: white;
+            border-color: #ff0000;
+            box-shadow: 0 6px 20px rgba(255, 0, 0, 0.3);
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .filter-btn.active::before {
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+
+        /* Dark mode para búsqueda y ordenamiento - Estilo Premium */
+        body.dark-mode .search-input {
+            background: linear-gradient(135deg, #2d3748 0%, #1a1a1a 100%);
+            color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(255, 0, 0, 0.1);
+        }
+
+        body.dark-mode .search-input:focus {
+            background: linear-gradient(135deg, #374151 0%, #2d3748 100%);
+            box-shadow: 0 0 0 4px rgba(255, 0, 0, 0.2);
+        }
+
+        body.dark-mode .search-input::placeholder {
+            color: #cccccc;
+        }
+
+        body.dark-mode .search-icon {
+            color: #ff0000;
+        }
+
+        body.dark-mode .search-icon:hover {
+            color: #ffffff;
+        }
+
+        body.dark-mode .sort-container label {
+            color: #ffffff;
+        }
+
+        body.dark-mode .sort-select {
+            background: linear-gradient(135deg, #2d3748 0%, #1a1a1a 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode .sort-select:focus {
+            background: linear-gradient(135deg, #374151 0%, #2d3748 100%);
+            box-shadow: 0 0 0 4px rgba(255, 0, 0, 0.2);
+        }
+
+        body.dark-mode .sort-select:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        body.dark-mode .sort-select option {
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+
+        /* Dark mode filter buttons - Estilo Premium */
+        body.dark-mode .filter-btn {
+            background: linear-gradient(135deg, #2d3748 0%, #1a1a1a 100%);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode .filter-btn:hover {
+            background: linear-gradient(135deg, #374151 0%, #2d3748 100%);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        body.dark-mode .filter-btn.active {
+            background: linear-gradient(135deg, #ff0000 0%, #e60000 100%);
+            color: white;
+            border-color: #ff0000;
+            box-shadow: 0 6px 20px rgba(255, 0, 0, 0.4);
+        }
+
+        /* Quantity selector */
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 0.5rem;
+        }
+
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            background: #333;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+            position: relative;
+        }
+
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            z-index: 10000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .notification.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        /* Hero video background */
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Notification Container -->
+    <div id="notification" class="notification">
+        <div class="flex items-center gap-3">
+            <i class="fas fa-check-circle text-green-500"></i>
+            <span id="notification-text"></span>
+        </div>
+    </div>
+
+    <!-- Zoom Modal -->
+    <div id="zoomModal" class="zoom-modal" onclick="closeZoomModal()">
+        <button class="zoom-nav zoom-prev" onclick="navigateZoom(-1); event.stopPropagation();">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <img id="zoomImage" class="zoom-image" src="" alt="">
+        <button class="zoom-nav zoom-next" onclick="navigateZoom(1); event.stopPropagation();">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content max-w-4xl">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <div class="grid md:grid-cols-2 gap-8 p-8">
+                <div>
+                    <div class="image-gallery" onclick="openZoomModal()">
+                        <img id="modalImage" src="" alt="" class="w-full rounded-lg">
+                    </div>
+                    <div id="thumbnailContainer" class="thumbnail-container">
+                        <!-- Thumbnails will be dynamically added here -->
+                    </div>
+                </div>
+                <div>
+                    <h2 id="modalTitle" class="text-3xl font-bold mb-4"></h2>
+                    <p id="modalPrice" class="text-2xl font-semibold text-gray-700 mb-4"></p>
+                    <p id="modalDescription" class="text-gray-600 mb-6"></p>
+                    
+                    <div class="mb-6">
+                        <h3 class="font-semibold mb-3">Talla</h3>
+                        <div class="size-selector" id="sizeSelector">
+                            <button class="size-btn" data-size="XS">XS</button>
+                            <button class="size-btn" data-size="S">S</button>
+                            <button class="size-btn" data-size="M">M</button>
+                            <button class="size-btn" data-size="L">L</button>
+                            <button class="size-btn" data-size="XL">XL</button>
+                            <button class="size-btn" data-size="XXL">XXL</button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="font-semibold mb-3">Cantidad</h3>
+                        <div class="quantity-selector">
+                            <button class="quantity-btn" onclick="decreaseQuantity()">-</button>
+                            <span id="quantity" class="font-semibold">1</span>
+                            <button class="quantity-btn" onclick="increaseQuantity()">+</button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <button onclick="addToCart()" class="flex-1 bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition">
+                            <i class="fas fa-shopping-cart mr-2"></i>Agregar al Carrito
+                        </button>
+                        <button class="p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="mt-8 pt-8 border-t">
+                        <div class="flex items-center gap-4 mb-4">
+                            <i class="fas fa-truck text-gray-600"></i>
+                            <span class="text-sm">Envío gratis en pedidos mayores a $50</span>
+                        </div>
+                        <div class="flex items-center gap-4 mb-4">
+                            <i class="fas fa-undo text-gray-600"></i>
+                            <span class="text-sm">Devoluciones gratuitas dentro de 30 días</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <i class="fas fa-shield-alt text-gray-600"></i>
+                            <span class="text-sm">Compra segura con encriptación SSL</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="shadow-lg sticky top-0 z-50" style="background-color: var(--nav-bg);">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold gradient-text">LussInkz</h1>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="nav-link hover:text-black transition" style="color: var(--text-primary);">Inicio</a>
+                    <a href="#products" class="nav-link hover:text-black transition" style="color: var(--text-primary);">Productos</a>
+                    <a href="#categories" class="nav-link hover:text-black transition" style="color: var(--text-primary);">Categorías</a>
+                    <a href="#about" class="nav-link hover:text-black transition" style="color: var(--text-primary);">Nosotros</a>
+                    <a href="#contact" class="nav-link hover:text-black transition" style="color: var(--text-primary);">Contacto</a>
+                    
+                    <!-- Theme Toggle -->
+                    <div class="theme-toggle" onclick="toggleTheme()">
+                        <div class="slider"></div>
+                        <i class="fas fa-sun theme-icon sun"></i>
+                        <i class="fas fa-moon theme-icon moon"></i>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSearch()" class="hover:text-black transition" style="color: var(--text-primary);">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="hover:text-black transition" style="color: var(--text-primary);">
+                        <i class="far fa-user"></i>
+                    </button>
+                    <button onclick="toggleCart()" class="relative hover:text-black transition" style="color: var(--text-primary);">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                    </button>
+                    <button onclick="toggleMobileMenu()" class="md:hidden" style="color: var(--text-primary);">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="mobile-menu fixed top-0 left-0 w-64 h-full shadow-lg z-50 md:hidden" style="background-color: var(--nav-bg);">
+            <div class="p-4">
+                <button onclick="toggleMobileMenu()" class="mb-8" style="color: var(--text-primary);">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+                <div class="flex flex-col space-y-4">
+                    <a href="#home" class="hover:text-black transition" style="color: var(--text-primary);">Inicio</a>
+                    <a href="#products" class="hover:text-black transition" style="color: var(--text-primary);">Productos</a>
+                    <a href="#categories" class="hover:text-black transition" style="color: var(--text-primary);">Categorías</a>
+                    <a href="#about" class="hover:text-black transition" style="color: var(--text-primary);">Nosotros</a>
+                    <a href="#contact" class="hover:text-black transition" style="color: var(--text-primary);">Contacto</a>
+                    
+                    <!-- Mobile Theme Toggle -->
+                    <div class="flex items-center space-x-3 pt-4 border-t" style="border-color: var(--border-color);">
+                        <span style="color: var(--text-primary);">Tema</span>
+                        <div class="theme-toggle" onclick="toggleTheme()">
+                            <div class="slider"></div>
+                            <i class="fas fa-sun theme-icon sun"></i>
+                            <i class="fas fa-moon theme-icon moon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Shopping Cart Sidebar -->
+    <div id="cartSidebar" class="fixed right-0 top-0 h-full w-80 shadow-lg transform translate-x-full transition-transform duration-300 z-50" style="background-color: var(--card-bg);">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold" style="color: var(--text-primary);">Carrito</h2>
+                <button onclick="toggleCart()" class="hover:text-gray-700 transition" style="color: var(--text-primary);">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="cartItems" class="space-y-4 mb-6">
+                <!-- Cart items will be dynamically added here -->
+            </div>
+            <div class="border-t pt-4" style="border-color: var(--border-color);">
+                <div class="flex justify-between mb-4">
+                    <span class="font-semibold" style="color: var(--text-primary);">Total:</span>
+                    <span id="cartTotal" class="font-bold text-xl" style="color: var(--text-primary);">$0</span>
+                </div>
+                <button class="w-full text-white py-3 rounded-lg hover:bg-gray-800 transition" style="background-color: var(--primary-color);">
+                    Proceder al Pago
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="hero-overlay"></div>
+        <video class="hero-video" autoplay muted loop>
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-fashion-model-with-a-yellow-jacket-posing-39880-large.mp4" type="video/mp4">
+        </video>
+        
+        <div class="relative z-10 text-center text-white px-4">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6" data-aos="fade-up">
+                Bienvenido a <span class="gradient-text">LussInkz</span>
+            </h1>
+            <p class="text-xl md:text-2xl mb-8" data-aos="fade-up" data-aos-delay="200">
+                Descubre las últimas tendencias en moda urbana
+            </p>
+            <div class="space-x-4" data-aos="fade-up" data-aos-delay="400">
+                <button onclick="scrollToProducts()" class="hero-btn hero-btn-primary px-8 py-3 rounded-full transform hover:scale-105">
+                    Explorar Colección
+                </button>
+                <button class="hero-btn hero-btn-secondary px-8 py-3 rounded-full transform hover:scale-105">
+                    Ver Catálogo
+                </button>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <i class="fas fa-chevron-down text-white text-2xl"></i>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16" style="background-color: var(--card-bg);">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="text-center" data-aos="fade-up">
+                    <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style="background-color: var(--bg-light);">
+                        <i class="fas fa-shipping-fast text-2xl" style="color: var(--text-primary);"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2" style="color: var(--text-primary);">Envío Rápido</h3>
+                    <p class="text-sm" style="color: var(--text-secondary);">Entrega en 24-48 horas</p>
+                </div>
+                <div class="text-center" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style="background-color: var(--bg-light);">
+                        <i class="fas fa-undo text-2xl" style="color: var(--text-primary);"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2" style="color: var(--text-primary);">Devoluciones Fáciles</h3>
+                    <p class="text-sm" style="color: var(--text-secondary);">30 días para devolver</p>
+                </div>
+                <div class="text-center" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style="background-color: var(--bg-light);">
+                        <i class="fas fa-shield-alt text-2xl" style="color: var(--text-primary);"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2" style="color: var(--text-primary);">Compra Segura</h3>
+                    <p class="text-sm" style="color: var(--text-secondary);">100% protegido</p>
+                </div>
+                <div class="text-center" data-aos="fade-up" data-aos-delay="300">
+                    <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style="background-color: var(--bg-light);">
+                        <i class="fas fa-headset text-2xl" style="color: var(--text-primary);"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2" style="color: var(--text-primary);">Soporte 24/7</h3>
+                    <p class="text-sm" style="color: var(--text-secondary);">Siempre disponible</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+
+                <div class="relative overflow-hidden rounded-lg hover-scale cursor-pointer" data-aos="fade-up" data-aos-delay="200">
+                    <img src="https://matissedenim.com.ar/wp-content/uploads/2026/01/WhatsApp-Image-2026-01-21-at-1.04.13-PM-2.jpeg" alt="Jorts Baggys" class="w-full h-64 object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                        <div class="p-6 text-white">
+                            <h3 class="text-2xl font-bold mb-2">Jorts Baggys</h3>
+                            <p>Diseño moderno</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="py-16" style="background-color: var(--card-bg);">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8" data-aos="fade-up">Nuestros Productos</h2>
+            
+            <!-- Barra de búsqueda -->
+            <div class="search-container" data-aos="fade-up">
+                <input type="text" id="searchInput" class="search-input" placeholder="Buscar producto" oninput="searchProducts(this.value)">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+
+            <!-- Controles de ordenamiento -->
+            <div class="sort-container" data-aos="fade-up">
+                <label for="sortSelect" class="sort-label">Ordenar por:</label>
+                <select id="sortSelect" class="sort-select">
+                    <option value="name-asc">Nombre (A-Z)</option>
+                    <option value="name-desc">Nombre (Z-A)</option>
+                    <option value="price-asc">Precio (menor a mayor)</option>
+                    <option value="price-desc">Precio (mayor a menor)</option>
+                </select>
+            </div>
+
+            <!-- Filter buttons -->
+            <div class="flex justify-center mb-8 flex-wrap gap-4" data-aos="fade-up">
+                <button class="filter-btn" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="jortsbaggys">Jorts Baggys</button>
+                <button class="filter-btn" data-filter="hoodies">Hoodies</button>
+                <button class="filter-btn" data-filter="accessories">Accesorios</button>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="productsGrid" class="product-grid">
+                <!-- Products will be dynamically loaded here -->
+            </div>
+            
+            <!-- Load More Button -->
+            <div class="text-center mt-12">
+                <button onclick="loadMoreProducts()" class="load-more-btn text-white px-8 py-3 rounded-full transform hover:scale-105">
+                    Cargar Más Productos
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16" style="background-color: var(--bg-light);">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div data-aos="fade-right">
+                    <h2 class="text-4xl font-bold mb-6" style="color: var(--text-primary);">Sobre LussInkz</h2>
+                    <p class="mb-6 text-lg leading-relaxed" style="color: var(--text-secondary);">
+                        <span class="text-2xl font-bold mb-4 block gradient-text">LUSSINKZ</span>
+                        <span class="block mb-4">Una marca de ropa urbana que representa <strong class="text-red-500">actitud</strong>, <strong class="text-red-500">identidad</strong> y <strong class="text-red-500">autenticidad</strong>.</span>
+                        
+                        <span class="block mb-4">Nos especializamos en prendas <strong>baggy</strong> y <strong>oversize</strong>, diseñadas para quienes buscan expresar quiénes son a través de su estilo único.</span>
+                        
+                        <span class="block mb-4 font-semibold">Nuestra Historia</span>
+                        <span class="block mb-4">LUSSINKZ nace de la unión de dos mejores amigos desde la infancia, que decidieron transformar una amistad de años en un proyecto con propósito. En lugar de dejar pasar el tiempo, eligieron invertirlo en crear algo propio, real y con significado.</span>
+                        
+                        <span class="block mb-4">De esa conexión genuina, de las emociones compartidas y del deseo de construir una marca con personalidad, nació LUSSINKZ: más que ropa, una historia, una visión y una forma de vivir la moda urbana.</span>
+                        
+                        <span class="block text-center mt-6 font-bold text-xl">Gracias por ser parte de LUSSINKZ. Esperamos que disfruten cada prenda, cada detalle y que vuelvan a elegir LUSSINKZ una y otra vez.</span>
+                    </p>
+
+                    <div class="grid grid-cols-3 gap-4 mb-8">
+                        <div class="text-center">
+                            <h3 class="text-3xl font-bold gradient-text">50+</h3>
+                            <p style="color: var(--text-secondary);">Clientes Felices</p>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-3xl font-bold gradient-text">100%</h3>
+                            <p style="color: var(--text-secondary);">Calidad</p>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-3xl font-bold gradient-text">99%</h3>
+                            <p style="color: var(--text-secondary);">Satisfacción</p>
+                        </div>
+                    </div>
+                    <button class="about-btn text-white px-8 py-3 rounded-full">
+                        Conoce Nuestra Historia
+                    </button>
+                </div>
+                <div data-aos="fade-left">
+                    <img src="https://i.imgur.com/7jCiMzK.png" alt="Sobre nosotros" class="rounded-lg shadow-lg">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="py-16 bg-black text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-4xl font-bold mb-4" data-aos="fade-up">Suscríbete a Nuestro Newsletter</h2>
+            <p class="text-xl mb-8" data-aos="fade-up" data-aos-delay="100">
+                Recibe las últimas novedades y ofertas exclusivas
+            </p>
+            <form class="max-w-md mx-auto flex gap-4" data-aos="fade-up" data-aos-delay="200" onsubmit="subscribeNewsletter(event)">
+                <input type="email" placeholder="Tu correo electrónico" class="flex-1 px-4 py-3 rounded-lg text-gray-900 newsletter-input" required>
+                <button type="submit" class="newsletter-btn px-6 py-3 rounded-lg">
+                    Suscribirse
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12" data-aos="fade-up">Contacto</h2>
+            <div class="grid md:grid-cols-2 gap-12">
+                <div data-aos="fade-right">
+                    <h3 class="text-2xl font-bold mb-6">Envíanos un Mensaje</h3>
+                    <form onsubmit="sendContactForm(event)">
+                        <div class="mb-4">
+                            <input type="text" placeholder="Nombre" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" required>
+                        </div>
+                        <div class="mb-4">
+                            <input type="email" placeholder="Correo" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" required>
+                        </div>
+                        <div class="mb-4">
+                            <input type="text" placeholder="Asunto" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" required>
+                        </div>
+                        <div class="mb-4">
+                            <textarea placeholder="Mensaje" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" required></textarea>
+                        </div>
+                        <button type="submit" class="bg-black text-white px-8 py-3 rounded-lg hover:bg-gray-800 transition">
+                            Enviar Mensaje
+                        </button>
+                    </form>
+                </div>
+                <div data-aos="fade-left">
+                    <h3 class="text-2xl font-bold mb-6">Información de Contacto</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <i class="fas fa-envelope text-gray-600"></i>
+                            <span>LussInkz@hotmail.com</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <i class="fas fa-phone text-gray-600"></i>
+                            <span>+54 9 299-591-7923 o +54 9 299-332-6124</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <i class="fas fa-map-marker-alt text-gray-600"></i>
+                            <span>Neuquén Capital, Neuquén, Argentina</span>
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <h4 class="font-semibold mb-4">Síguenos en Redes Sociales</h4>
+                        <div class="flex space-x-4">
+                            <a href="https://www.instagram.com/lussinkz/" target="_blank" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="https://www.tiktok.com/@lussinkz" target="_blank" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition">
+                                <i class="fab fa-tiktok"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <h3 class="text-xl font-bold">LussInkz</h3>
+                    </div>
+                    <p class="text-gray-400">Tu marca de confianza para ropa urbana de alta calidad.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Enlaces Rápidos</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">Inicio</a></li>
+                        <li><a href="#" class="hover:text-white transition">Productos</a></li>
+                        <li><a href="#" class="hover:text-white transition">Nosotros</a></li>
+                        <li><a href="#" class="hover:text-white transition">Contacto</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Categorías</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">Hoodies</a></li>
+                        <li><a href="#" class="hover:text-white transition">Jorts Baggys</a></li>
+                        <li><a href="#" class="hover:text-white transition">Accesorios</a></li>
+                        <li><a href="#" class="hover:text-white transition">Nuevos</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Síguenos</h4>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/lussinkz/" target="_blank" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-600 transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/@lussinkz" target="_blank" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-600 transition">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 LussInkz. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Flotante -->
+    <a href="https://wa.me/5491123456789?text=Hola!%20Vi%20sus%20productos%20en%20LussInkz%20y%20quiero%20consultar%20por%20alguno" 
+       target="_blank" 
+       class="whatsapp-float"
+       title="Contactar por WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Chatbot -->
+    <div id="chatbot" class="chatbot-container">
+        <div id="chatbotToggle" class="chatbot-toggle">
+            <i class="fas fa-comments"></i>
+        </div>
+        <div id="chatbotWindow" class="chatbot-window">
+            <div class="chatbot-header">
+                <h4>Asistente LussInkz</h4>
+                <button id="closeChatbot">&times;</button>
+            </div>
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="bot-message">
+                    ¡Hola! 👋 ¿En qué puedo ayudarte?<br><br>
+                    Puedo responder sobre:<br>
+                    • Productos disponibles<br>
+                    • Tallas y colores<br>
+                    • Envíos y pagos<br>
+                    • Cuidados de prendas
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbotInput" placeholder="Escribe tu pregunta...">
+                <button id="sendChatbotMessage"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+        <div class="slider"></div>
+        <i class="fas fa-sun theme-icon sun"></i>
+        <i class="fas fa-moon theme-icon moon"></i>
+    </div>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
